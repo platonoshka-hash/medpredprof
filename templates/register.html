@@ -1,0 +1,145 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Регистрация</h1>
+<form action="{{ url_for('register_post') }}" method="post" class="card">
+  {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  
+  <label for="login">Логин</label>
+  <input id="login" name="login" type="text" required placeholder="Только буквы, цифры, _, -, . (3-20 символов)">
+  
+  <label for="password">Пароль</label>
+  <input id="password" name="password" type="password" required placeholder="Минимум 6 символов">
+  
+  <label for="full_name">ФИО</label>
+  <input id="full_name" name="full_name" type="text" required placeholder="Иванов Иван Иванович">
+  
+  <label for="class_name">Класс</label>
+  <input id="class_name" name="class_name" type="text" required placeholder="11-01, 10-09, 9-03">
+  
+  <button type="submit">Зарегистрироваться</button>
+</form>
+<p><a href="{{ url_for('login_form') }}">Уже есть аккаунт? Войти</a></p>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  const loginInput = document.getElementById('login');
+  const passwordInput = document.getElementById('password');
+  const fullNameInput = document.getElementById('full_name');
+  const classInput = document.getElementById('class_name');
+  
+  // Валидация в реальном времени
+  function validateLogin(login) {
+    const pattern = /^[a-zA-Z0-9_\-\.]+$/;
+    return login.length >= 3 && login.length <= 20 && pattern.test(login);
+  }
+  
+  function validatePassword(password) {
+    return password.length >= 6;
+  }
+  
+  function validateFullName(name) {
+    const pattern = /^[а-яёА-ЯЁa-zA-Z\s\-]+$/;
+    const words = name.trim().split(/\s+/);
+    return name.length >= 2 && 
+           name.length <= 100 && 
+           pattern.test(name) && 
+           words.length >= 2 && 
+           words.every(word => word[0] && word[0] === word[0].toUpperCase());
+  }
+  
+  function validateClass(class_name) {
+    const pattern = /^[1-9]?\d-[0-9]\d$/;
+    if (!pattern.test(class_name)) return false;
+    const parts = class_name.split('-');
+    const grade = parseInt(parts[0]);
+    return grade >= 1 && grade <= 11;
+  }
+  
+  function showError(input, message) {
+    let errorDiv = input.parentNode.querySelector('.field-error');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'field-error';
+      errorDiv.style.color = '#f278d0';
+      errorDiv.style.fontSize = '12px';
+      errorDiv.style.marginTop = '4px';
+      input.parentNode.appendChild(errorDiv);
+    }
+    errorDiv.textContent = message;
+    input.style.borderColor = '#f278d0';
+  }
+  
+  function clearError(input) {
+    const errorDiv = input.parentNode.querySelector('.field-error');
+    if (errorDiv) {
+      errorDiv.remove();
+    }
+    input.style.borderColor = '';
+  }
+  
+  // Валидация при вводе
+  loginInput.addEventListener('input', function() {
+    if (this.value && !validateLogin(this.value)) {
+      showError(this, 'Логин должен содержать только буквы, цифры, _, -, . (3-20 символов)');
+    } else {
+      clearError(this);
+    }
+  });
+  
+  passwordInput.addEventListener('input', function() {
+    if (this.value && !validatePassword(this.value)) {
+      showError(this, 'Пароль должен содержать минимум 6 символов');
+    } else {
+      clearError(this);
+    }
+  });
+  
+  fullNameInput.addEventListener('input', function() {
+    if (this.value && !validateFullName(this.value)) {
+      showError(this, 'ФИО должно содержать только буквы, пробелы и дефисы. Пример: Иванов Иван Иванович');
+    } else {
+      clearError(this);
+    }
+  });
+  
+  classInput.addEventListener('input', function() {
+    if (this.value && !validateClass(this.value)) {
+      showError(this, 'Класс должен быть в формате XX-XX (например: 11-01, 10-09)');
+    } else {
+      clearError(this);
+    }
+  });
+  
+  // Валидация при отправке формы
+  form.addEventListener('submit', function(e) {
+    let isValid = true;
+    
+    if (!validateLogin(loginInput.value)) {
+      showError(loginInput, 'Логин должен содержать только буквы, цифры, _, -, . (3-20 символов)');
+      isValid = false;
+    }
+    
+    if (!validatePassword(passwordInput.value)) {
+      showError(passwordInput, 'Пароль должен содержать минимум 6 символов');
+      isValid = false;
+    }
+    
+    if (!validateFullName(fullNameInput.value)) {
+      showError(fullNameInput, 'ФИО должно содержать только буквы, пробелы и дефисы. Пример: Иванов Иван Иванович');
+      isValid = false;
+    }
+    
+    if (!validateClass(classInput.value)) {
+      showError(classInput, 'Класс должен быть в формате XX-XX (например: 11-01, 10-09)');
+      isValid = false;
+    }
+    
+    if (!isValid) {
+      e.preventDefault();
+    }
+  });
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,17 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<article class="task">
+  {% if task.image_path %}
+    <img class="task-image" src="{{ url_for('static', filename=task.image_path) }}" alt="Иллюстрация">
+  {% endif %}
+  <h1>{{ task.title }}</h1>
+  {% if task.description %}<p class="desc">{{ task.description }}</p>{% endif %}
+  
+  <form action="{{ url_for('task_submit', task_id=task.id) }}" method="post" class="card">
+    <label for="answer">Ваш ответ</label>
+    <input id="answer" name="answer" type="text" placeholder="Введите ответ" required>
+    <button type="submit">Готово</button>
+  </form>
+</article>
+{% endblock %}
+

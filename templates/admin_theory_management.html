@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Админ: Управление статьями теории</h1>
+<p><a class="button" href="{{ url_for('admin_new_theory_form') }}">Добавить статью</a></p>
+<p><a class="button secondary" href="{{ url_for('admin_dashboard') }}">← Назад к задачам</a></p>
+
+{% if articles|length == 0 %}
+  <p>Пока нет статей теории.</p>
+{% else %}
+  <table class="table">
+    <thead>
+      <tr><th>ID</th><th>Название</th><th>Дата создания</th><th>Действия</th></tr>
+    </thead>
+    <tbody>
+      {% for article in articles %}
+      <tr>
+        <td>{{ article.id }}</td>
+        <td>{{ article.title }}</td>
+        <td>{{ article.created_at[:10] if article.created_at else 'Неизвестно' }}</td>
+        <td>
+          <a class="button small" href="{{ url_for('theory_view', article_id=article.id) }}" target="_blank">Просмотр</a>
+          <form action="{{ url_for('admin_delete_theory', article_id=article.id) }}" method="post" onsubmit="return confirm('Удалить статью «{{ article.title }}»?')" style="display: inline;">
+            <button class="danger small" type="submit">Удалить</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}
+

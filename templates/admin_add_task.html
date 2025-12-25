@@ -1,0 +1,98 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Новая задача</h1>
+<form action="{{ url_for('admin_create_task') }}" method="post" class="card" enctype="multipart/form-data" id="task-form">
+  {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  
+  <label for="title">Название</label>
+  <input id="title" name="title" type="text" required>
+
+  <label for="description">Описание (необязательно)</label>
+  <textarea id="description" name="description" rows="4"></textarea>
+
+  <label for="image">Картинка (png/jpg/webp/gif)</label>
+  <input id="image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp">
+
+  <label for="task_type">Тип задачи</label>
+  <select id="task_type" name="task_type" onchange="toggleTaskType()">
+    <option value="multiple_choice">Множественный выбор</option>
+    <option value="text_input">Текстовый ответ</option>
+  </select>
+
+  <div id="multiple-choice-section">
+    <div class="options-builder">
+      <div class="builder-head">
+        <strong>Варианты ответа</strong>
+        <button class="button secondary" type="button" onclick="addOption()">+ Добавить вариант</button>
+      </div>
+      <div id="options-list"></div>
+    </div>
+  </div>
+
+  <div id="text-input-section" style="display: none;">
+    <label for="answer">Правильный ответ</label>
+    <input id="answer" name="answer" type="text">
+    
+    <label class="checkbox">
+      <input type="checkbox" name="case_sensitive"> Учитывать регистр ответа
+    </label>
+  </div>
+
+  <button type="submit">Сохранить</button>
+</form>
+
+<script>
+let optionCount = 0;
+
+function toggleTaskType() {
+  const taskType = document.getElementById('task_type').value;
+  const multipleSection = document.getElementById('multiple-choice-section');
+  const textSection = document.getElementById('text-input-section');
+  
+  if (taskType === 'multiple_choice') {
+    multipleSection.style.display = 'block';
+    textSection.style.display = 'none';
+  } else {
+    multipleSection.style.display = 'none';
+    textSection.style.display = 'block';
+  }
+}
+
+function addOption(text = "") {
+  const idx = optionCount++;
+  const wrap = document.createElement("div");
+  wrap.className = "option-row";
+  wrap.innerHTML = `
+    <input type="text" name="option_text[]" placeholder="Текст варианта" value="${text.replaceAll('"','&quot;')}" required>
+    <label class="checkbox"><input type="checkbox" name="option_correct" data-idx="${idx}"> Правильный</label>
+    <button class="button danger" type="button" onclick="this.parentElement.remove()">Удалить</button>
+  `;
+  document.getElementById("options-list").appendChild(wrap);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  addOption();
+  addOption();
+  
+  document.getElementById("task-form").addEventListener("submit", () => {
+    const taskType = document.getElementById('task_type').value;
+    if (taskType === 'multiple_choice') {
+      const list = document.getElementById("options-list");
+      const checks = list.querySelectorAll('input[name="option_correct"]');
+      document.querySelectorAll('input[name="option_correct_idx[]"]').forEach(e=>e.remove());
+      let pos = 0;
+      list.querySelectorAll('input[name="option_text[]"]').forEach((t) => {
+        const chk = checks[pos++];
+        if (chk && chk.checked) {
+          const hidden = document.createElement("input");
+          hidden.type = "hidden";
+          hidden.name = "option_correct_idx[]";
+          hidden.value = String(pos-1);
+          document.getElementById("task-form").appendChild(hidden);
+        }
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

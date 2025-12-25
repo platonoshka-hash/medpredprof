@@ -1,0 +1,33 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Админ: Задачи</h1>
+<p>
+  <a class="button" href="{{ url_for('admin_new_task_form') }}">Добавить задачу</a>
+  <a class="button secondary" href="{{ url_for('admin_theory_management') }}">Управление статьями теории</a>
+</p>
+
+{% if tasks|length == 0 %}
+  <p>Пока нет задач.</p>
+{% else %}
+  <table class="table">
+    <thead>
+      <tr><th>ID</th><th>Название</th><th>Тип</th><th>Вариантов</th><th>Действия</th></tr>
+    </thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.title }}</td>
+        <td>{{ 'Множественный выбор' if t.task_type == 'multiple_choice' else 'Текстовый ответ' }}</td>
+        <td>{{ counts.get(t.id, 0) }}</td>
+        <td>
+          <form action="{{ url_for('admin_delete_task', task_id=t.id) }}" method="post" onsubmit="return confirm('Удалить задачу?')">
+            <button class="danger" type="submit">Удалить</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

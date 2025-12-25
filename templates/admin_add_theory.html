@@ -1,0 +1,19 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Новая статья теории</h1>
+<form action="{{ url_for('admin_create_theory') }}" method="post" class="card" enctype="multipart/form-data">
+  {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  
+  <label for="title">Название</label>
+  <input id="title" name="title" type="text" required>
+
+  <label for="content">Содержание</label>
+  <textarea id="content" name="content" rows="10" required></textarea>
+
+  <label for="image">Картинка (png/jpg/webp/gif)</label>
+  <input id="image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp">
+
+  <button type="submit">Сохранить</button>
+</form>
+{% endblock %}
+

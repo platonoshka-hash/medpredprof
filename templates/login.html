@@ -1,0 +1,17 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Вход</h1>
+<form action="{{ url_for('login_post') }}" method="post" class="card">
+  {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  
+  <label for="login">Логин</label>
+  <input id="login" name="login" type="text" required>
+  
+  <label for="password">Пароль</label>
+  <input id="password" name="password" type="password" required>
+  
+  <button type="submit">Войти</button>
+</form>
+<p><a href="{{ url_for('register_form') }}">Нет аккаунта? Зарегистрироваться</a></p>
+{% endblock %}
+

@@ -1,0 +1,11 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>{{ task.title }}</h1>
+{% if is_correct %}
+  <div class="alert success">Правильно! ��</div>
+{% else %}
+  <div class="alert error">Неправильно. Попробуйте ещё раз.</div>
+{% endif %}
+<a class="button" href="{{ url_for('task_view', task_id=task.id) }}">Вернуться к задаче</a>
+<a class="button secondary" href="{{ url_for('index') }}">К списку задач</a>
+{% endblock %}

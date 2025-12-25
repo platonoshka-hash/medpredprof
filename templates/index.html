@@ -1,0 +1,33 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1>Добро пожаловать в MedPredProf</h1>
+
+<div class="grid">
+  <div class="card">
+    <h2>Задачи</h2>
+    {% if tasks|length == 0 %}
+      <p>Пока нет задач.</p>
+    {% else %}
+      <ul class="list">
+        {% for t in tasks %}
+          <li><a href="{{ url_for('task_view', task_id=t.id) }}">{{ t.title }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  
+  <div class="card">
+    <h2>Теория</h2>
+    {% if articles|length == 0 %}
+      <p>Пока нет статей.</p>
+    {% else %}
+      <ul class="list">
+        {% for a in articles %}
+          <li><a href="{{ url_for('theory_view', article_id=a.id) }}">{{ a.title }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <p><a class="button" href="{{ url_for('theory_list') }}">Все статьи</a></p>
+  </div>
+</div>
+{% endblock %}

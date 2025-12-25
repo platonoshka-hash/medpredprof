@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<article class="theory">
+  {% if article.image_path %}
+    <img class="article-image" src="{{ url_for('static', filename=article.image_path) }}" alt="Иллюстрация">
+  {% endif %}
+  <h1>{{ article.title }}</h1>
+  <div class="content">{{ article.content|replace('\n', '<br>')|safe }}</div>
+  <a class="button" href="{{ url_for('theory_list') }}">К списку статей</a>
+</article>
+{% endblock %}
+
